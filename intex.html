@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brightness Controller — Premium Display Sync Engine for Windows 11</title>
+
+    <!-- Auto Breakout Script for Full Screen App Experience -->
+    <script>
+        if (window.top !== window.self) {
+            window.top.location.href = window.location.href;
+        }
+    </script>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#070709',
+                        surface: '#111115',
+                        'surface-card': '#16161d',
+                        'surface-border': '#262633',
+                        neonPurple: '#a855f7',
+                        neonPurpleHover: '#9333ea',
+                        electricCyan: '#00f2fe',
+                        brandGreen: '#25d366',
+                        brandBlue: '#0088cc',
+                        brandInsta: '#e1306c',
+                        brandFb: '#1877f2',
+                        brandYt: '#ff0000',
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Segoe UI', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'neon-purple': '0 0 50px -10px rgba(168, 85, 247, 0.45)',
+                        'neon-cyan': '0 0 50px -10px rgba(0, 242, 254, 0.35)',
+                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+                        '3d-glow': '0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(168, 85, 247, 0.2)',
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 4s infinite ease-in-out',
+                        'float': 'float 6s infinite ease-in-out',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
+                            '50%': { opacity: '0.7', transform: 'scale(1.03)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-8px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            background-color: #070709;
+            color: #f4f4f5;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Enhanced Glassmorphism & Depth */
+        .glass-panel {
+            background: rgba(18, 18, 24, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(168, 85, 247, 0.5);
+            box-shadow: 0 20px 40px -15px rgba(168, 85, 247, 0.3);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 40%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #ambientCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #070709; }
+        ::-webkit-scrollbar-thumb { background: #262633; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a855f7; }
+
+        /* Smooth 3D tilt transformation */
+        .tilt-card {
+            transform-style: preserve-3d;
+            transition: transform 0.2s ease-out, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .tilt-content {
+            transform: translateZ(30px);
+        }
+    </style>
+</head>
+<body class="relative min-h-screen text-slate-100 antialiased selection:bg-neonPurple selection:text-white">
+
+    <canvas id="ambientCanvas"></canvas>
+
+    <!-- Navigation Header -->
+    <nav class="sticky top-0 z-40 w-full glass-panel border-b border-surface-border/60">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-neonPurple to-electricCyan rounded-xl blur opacity-60 group-hover:opacity-100 transition duration-300"></div>
+                    <img src="EMBC.PNG" alt="App Icon" class="relative w-10 h-10 rounded-xl object-cover" onerror="this.src='embc.png'; this.onerror=function(){this.src='EMBC.ico'; this.onerror=function(){this.style.display='none'; document.getElementById('navFallbackIcon').classList.remove('hidden');}}">
+                    <div id="navFallbackIcon" class="hidden relative w-10 h-10 rounded-xl bg-gradient-to-tr from-neonPurple to-electricCyan flex items-center justify-center text-xl font-bold">☀️</div>
+                </div>
+                <div>
+                    <span class="text-lg font-extrabold tracking-tight text-white block">Brightness Controller</span>
+                    <span class="text-[10px] font-semibold text-neonPurple tracking-wider uppercase block -mt-1">Pro Display Engine</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <a href="#live-demo" class="hidden sm:inline-flex text-xs font-semibold text-zinc-400 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/5">Interactive Simulator</a>
+                <a href="#features" class="hidden sm:inline-flex text-xs font-semibold text-zinc-400 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/5">Features</a>
+                <a href="https://drive.google.com/drive/folders/10kLK2X9KbDElJUNRsPLHidIXKImg5HPV?usp=sharing" target="_blank" class="relative group overflow-hidden rounded-xl p-[1px] focus:outline-none">
+                    <span class="absolute inset-0 bg-gradient-to-r from-neonPurple to-electricCyan rounded-xl"></span>
+                    <div class="relative px-5 py-2.5 bg-obsidian rounded-[11px] transition-all duration-300 group-hover:bg-opacity-0 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        <span class="text-xs font-bold text-white tracking-wide">Download Engine</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative z-10 pt-16 pb-20 lg:pt-24 lg:pb-32 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-neonPurple/40 bg-neonPurple/10 backdrop-blur-md mb-8 animate-pulse-glow">
+                <span class="w-2 h-2 rounded-full bg-neonPurple animate-ping"></span>
+                <span class="text-xs font-bold text-purple-300 tracking-wider uppercase">Native Windows 11 DDC/CI Engine</span>
+            </div>
+
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight max-w-5xl mx-auto mb-6 text-gradient">
+                Master Your Multi-Monitor Brightness with Zero Effort.
+            </h1>
+
+            <p class="text-base sm:text-xl text-zinc-400 max-w-3xl mx-auto mb-10 font-normal leading-relaxed">
+                Seamlessly control hardware brightness and contrast across external monitors and laptop displays in real-time. Features Windows 11 Action Center synchronization, hotkey bindings, and non-blocking DDC/CI hardware writes.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+                <a href="https://drive.google.com/drive/folders/10kLK2X9KbDElJUNRsPLHidIXKImg5HPV?usp=sharing" target="_blank" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-neonPurple to-neonPurpleHover text-white font-bold text-base shadow-neon-purple hover:shadow-purple-500/50 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 group">
+                    <svg class="w-5 h-5 group-hover:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    <span>Download Software (.exe)</span>
+                </a>
+                <a href="#live-demo" class="w-full sm:w-auto px-8 py-4 rounded-xl glass-panel border border-surface-border text-zinc-200 font-semibold text-base hover:bg-white/5 hover:border-zinc-500 transition-all duration-300 flex items-center justify-center gap-2">
+                    <span>Try Interactive Demo</span>
+                    <svg class="w-4 h-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </a>
+            </div>
+
+            <!-- Software Display Frame with 3D Tilt -->
+            <div class="tilt-card relative max-w-4xl mx-auto rounded-2xl p-1 bg-gradient-to-b from-surface-border via-neonPurple/20 to-transparent shadow-3d-glow">
+                <div class="glass-panel rounded-2xl overflow-hidden p-6 sm:p-8 tilt-content">
+                    <div class="flex items-center justify-between pb-6 mb-6 border-b border-surface-border/60">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-red-500/80 inline-block"></span>
+                            <span class="w-3 h-3 rounded-full bg-yellow-500/80 inline-block"></span>
+                            <span class="w-3 h-3 rounded-full bg-green-500/80 inline-block"></span>
+                            <span class="ml-2 text-xs text-zinc-500 font-mono">Brightness Controller v3.0</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-zinc-400 font-mono">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span>DDC/CI Worker Active</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                        <div class="glass-card rounded-xl p-5 border border-surface-border">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-2xl">💻</span>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-white">Internal Laptop Panel</h4>
+                                        <p class="text-[11px] text-zinc-400">Master Source (WMI)</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-bold text-neonPurple px-2.5 py-1 rounded-md bg-neonPurple/10 border border-neonPurple/20">Active</span>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-xs font-semibold">
+                                    <span class="text-zinc-400">Brightness Level</span>
+                                    <span class="text-neonPurple font-bold">75%</span>
+                                </div>
+                                <div class="w-full bg-surface-border h-2 rounded-full overflow-hidden">
+                                    <div class="bg-neonPurple h-full rounded-full" style="width: 75%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card rounded-xl p-5 border border-surface-border">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-2xl">🖥️</span>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-white">Dell UltraSharp 27"</h4>
+                                        <p class="text-[11px] text-zinc-400">External Display (DDC/CI)</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[10px] text-purple-300 font-semibold">Independent Control</span>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-xs font-semibold mb-1">
+                                        <span class="text-zinc-400">Hardware Brightness</span>
+                                        <span class="text-electricCyan font-bold">60%</span>
+                                    </div>
+                                    <div class="w-full bg-surface-border h-1.5 rounded-full overflow-hidden">
+                                        <div class="bg-electricCyan h-full rounded-full" style="width: 60%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Interactive Simulator Section -->
+    <section id="live-demo" class="relative z-10 py-20 bg-surface/50 border-y border-surface-border/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs font-bold text-electricCyan uppercase tracking-widest block mb-2">Live Interactive Simulator</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Test Real-Time Hardware Sync & Unlink</h2>
+                <p class="text-zinc-400 mt-3 text-sm sm:text-base">
+                    Toggle the synchronization switch below. When turned <strong>OFF</strong>, each display operates on its own dedicated slider!
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                
+                <!-- Controls Box -->
+                <div class="lg:col-span-5 glass-panel rounded-2xl p-6 sm:p-8 border border-surface-border space-y-6">
+                    <div class="flex items-center justify-between border-b border-surface-border pb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">⚡</span>
+                            <h3 class="font-bold text-white text-base">Control Flyout Console</h3>
+                        </div>
+                        <span class="text-[11px] font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded">Polling: 250ms</span>
+                    </div>
+
+                    <!-- Sync Switch -->
+                    <div class="p-3.5 rounded-xl bg-surface-card border border-surface-border/80 flex items-center justify-between">
+                        <div>
+                            <span class="text-xs font-bold text-white block">Sync Displays Together</span>
+                            <span class="text-[11px] text-zinc-400 block">Link master laptop slider to external screen</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="simSyncToggle" class="sr-only peer">
+                            <div class="w-10 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neonPurple"></div>
+                        </label>
+                    </div>
+
+                    <!-- Laptop Control Slider -->
+                    <div class="space-y-2 pt-2">
+                        <div class="flex justify-between items-center text-xs font-bold">
+                            <span class="text-zinc-300 flex items-center gap-1.5">💻 Internal Laptop Screen</span>
+                            <span id="simLaptopValue" class="text-neonPurple font-extrabold text-sm">65%</span>
+                        </div>
+                        <input type="range" id="simLaptopSlider" min="0" max="100" value="65" class="w-full h-2 bg-surface-border rounded-lg appearance-none cursor-pointer accent-neonPurple">
+                        <p class="text-[11px] text-zinc-500">Master Fn / Windows Slider</p>
+                    </div>
+
+                    <div class="pt-2 border-t border-surface-border/60"></div>
+
+                    <!-- External Monitor Slider -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-xs font-bold">
+                            <span class="text-zinc-300 flex items-center gap-1.5">🖥️ Desktop External Monitor</span>
+                            <span id="simExtValue" class="text-electricCyan font-extrabold text-sm">40%</span>
+                        </div>
+                        <input type="range" id="simExtSlider" min="0" max="100" value="40" class="w-full h-2 bg-surface-border rounded-lg appearance-none cursor-pointer accent-electricCyan">
+                        <p id="simExtSubtext" class="text-[11px] text-amber-400 font-mono">Status: Independent Dedicated Slider</p>
+                    </div>
+
+                    <!-- Hardware Log Console -->
+                    <div class="bg-black/70 rounded-xl p-3 border border-zinc-800 font-mono text-[11px] text-zinc-400 space-y-1 h-28 overflow-hidden">
+                        <div class="text-zinc-500 border-b border-zinc-800 pb-1 flex justify-between">
+                            <span>HARDWARE WORKER QUEUE</span>
+                            <span class="text-neonPurple">120ms Debounce</span>
+                        </div>
+                        <div id="simLogConsole" class="space-y-1 pt-1 text-[10px]">
+                            <div class="text-emerald-400">[READY] System initialized...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Displays Visual Simulation Column -->
+                <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    
+                    <!-- Simulated Laptop Screen -->
+                    <div class="tilt-card glass-card rounded-2xl p-5 border border-surface-border flex flex-col justify-between h-72 relative overflow-hidden shadow-xl" id="simLaptopScreen">
+                        <div class="absolute inset-0 bg-white transition-opacity duration-150 pointer-events-none" id="simLaptopBrightnessOverlay" style="opacity: 0.65;"></div>
+                        
+                        <div class="relative z-10 flex justify-between items-center text-xs font-bold text-black drop-shadow">
+                            <span>💻 Laptop Panel</span>
+                            <span class="bg-black/70 text-white text-[10px] px-2.5 py-1 rounded-md backdrop-blur">WMI Driver</span>
+                        </div>
+
+                        <div class="relative z-10 text-center space-y-1 my-auto">
+                            <div class="text-4xl font-extrabold text-slate-900 drop-shadow-md" id="simLaptopText">65%</div>
+                            <div class="text-xs font-bold text-slate-800 uppercase tracking-wider">Internal Display</div>
+                        </div>
+
+                        <div class="relative z-10 text-[10px] text-slate-800 text-center font-mono font-bold">
+                            Master Input Source
+                        </div>
+                    </div>
+
+                    <!-- Simulated External DDC Display -->
+                    <div class="tilt-card glass-card rounded-2xl p-5 border border-surface-border flex flex-col justify-between h-72 relative overflow-hidden shadow-xl" id="simExtScreen">
+                        <div class="absolute inset-0 bg-white transition-opacity duration-150 pointer-events-none" id="simExtBrightnessOverlay" style="opacity: 0.40;"></div>
+                        
+                        <div class="relative z-10 flex justify-between items-center text-xs font-bold text-black drop-shadow">
+                            <span>🖥️ External Display</span>
+                            <span class="bg-black/70 text-white text-[10px] px-2.5 py-1 rounded-md backdrop-blur">DDC/CI VCP 0x10</span>
+                        </div>
+
+                        <div class="relative z-10 text-center space-y-1 my-auto">
+                            <div class="text-4xl font-extrabold text-slate-900 drop-shadow-md" id="simExtText">40%</div>
+                            <div class="text-xs font-bold text-slate-800 uppercase tracking-wider">Hardware VCP Bus</div>
+                        </div>
+
+                        <div class="relative z-10 text-[10px] font-bold text-amber-800 text-center font-mono" id="simExtSyncStatus">
+                            Mode: UNLINKED / INDEPENDENT
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="relative z-10 py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs font-bold text-neonPurple uppercase tracking-widest block mb-2">Engine Architecture</span>
+                <h2 class="text-3xl sm:text-5xl font-extrabold text-white">Built for Speed, Reliability & Precision</h2>
+                <p class="text-zinc-400 mt-4 text-base">
+                    Engineered directly on Windows Win32 APIs for instantaneous hardware response without system overhead.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <div class="glass-card tilt-card rounded-2xl p-8 border border-surface-border relative group">
+                    <div class="w-14 h-14 rounded-xl bg-neonPurple/10 border border-neonPurple/30 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        🛡️
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Single-Instance Mutex Guard</h3>
+                    <p class="text-zinc-400 text-sm leading-relaxed">
+                        Features Kernel32 Mutex guard (`CreateMutexW`). Guarantees zero duplicate launches by restoring and bringing the existing instance to focus immediately.
+                    </p>
+                </div>
+
+                <div class="glass-card tilt-card rounded-2xl p-8 border border-surface-border relative group">
+                    <div class="w-14 h-14 rounded-xl bg-electricCyan/10 border border-electricCyan/30 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        🖥️
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Win32 DDC/CI Hardware Engine</h3>
+                    <p class="text-zinc-400 text-sm leading-relaxed">
+                        Communicates over `dxva2.dll` to read and write physical monitor hardware registers directly via VCP code `0x10` (Brightness) and `0x12` (Contrast).
+                    </p>
+                </div>
+
+                <div class="glass-card tilt-card rounded-2xl p-8 border border-surface-border relative group">
+                    <div class="w-14 h-14 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        🔄
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Selective Display Unlinking</h3>
+                    <p class="text-zinc-400 text-sm leading-relaxed">
+                        Toggle sync on or off at will. Individually tweak independent monitors or lock them all together to your master laptop brightness key.
+                    </p>
+                </div>
+
+                <div class="glass-card tilt-card rounded-2xl p-8 border border-surface-border relative group">
+                    <div class="w-14 h-14 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        ⚡
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Non-Blocking Debounced Queue</h3>
+                    <p class="text-zinc-400 text-sm leading-relaxed">
+                        Executes hardware writes on a dedicated `QThread` with a 120ms trailing-edge debounce worker. Slider movement stays buttery smooth without lag.
+                    </p>
+                </div>
+
+                <div class="glass-card tilt-card rounded-2xl p-8 border border-surface-border relative group">
+                    <div class="w-14 h-14 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        🎛️
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Win11 Quick Control Flyout</h3>
+                    <p class="text-zinc-400 text-sm leading-relaxed">
+                        Single-click or tap on the system tray icon pops up an Action Center styled floating slider menu right above the Windows taskbar for instant tweaks.
+                    </p>
+                </div>
+
+                <div class="glass-card tilt-card rounded-2xl p-8 border border-surface-border relative group">
+                    <div class="w-14 h-14 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        🔌
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Hot-Plug & JSON State Persistence</h3>
+                    <p class="text-zinc-400 text-sm leading-relaxed">
+                        Automatically detects monitors plugged in or disconnected on the fly via `WM_DISPLAYCHANGE` while persisting preferences safely to local storage.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Call To Action -->
+    <section class="relative z-10 py-20 bg-gradient-to-b from-transparent via-purple-950/20 to-transparent">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="glass-panel rounded-3xl p-8 sm:p-14 border border-neonPurple/30 text-center relative overflow-hidden shadow-neon-purple">
+                <div class="absolute -top-24 -right-24 w-64 h-64 bg-neonPurple/20 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <h2 class="text-3xl sm:text-5xl font-extrabold text-white mb-6">Ready to Take Control of Your Displays?</h2>
+                <p class="text-zinc-300 text-base sm:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+                    Download Brightness Controller now for Windows 11. Lightweight, portable, standalone execution with zero bloat.
+                </p>
+
+                <a href="https://drive.google.com/drive/folders/10kLK2X9KbDElJUNRsPLHidIXKImg5HPV?usp=sharing" target="_blank" class="inline-flex items-center gap-3 px-10 py-5 rounded-2xl bg-gradient-to-r from-neonPurple to-electricCyan text-slate-950 font-extrabold text-lg shadow-xl hover:scale-105 transition-all duration-300">
+                    <svg class="w-6 h-6 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    <span>Download Software Executable</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="relative z-10 border-t border-surface-border/80 bg-obsidian/90 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+            
+            <div>
+                <button id="openDevModalBtn" class="inline-flex items-center gap-3 bg-surface-card hover:bg-surface-border border border-surface-border hover:border-neonPurple/60 px-5 py-2.5 rounded-xl cursor-pointer transition-all duration-300 group shadow-lg">
+                    <img src="Developer.jpg" alt="Mukesh Saw" class="w-6 h-6 rounded-full object-cover border border-neonPurple/40" onerror="this.onerror=null; this.src='https://placehold.co/100x100/a855f7/ffffff?text=MS';">
+                    <span class="text-xs font-bold text-zinc-200 group-hover:text-white">Developed by Mukesh Saw</span>
+                    <span class="text-xs text-neonPurple group-hover:translate-x-0.5 transition-transform">➔</span>
+                </button>
+            </div>
+
+            <p class="text-xs text-zinc-500 font-mono">
+                Brightness Controller Engine — Crafted with PySide6 & Win32 DDC/CI Core APIs
+            </p>
+
+        </div>
+    </footer>
+
+    <!-- Developer Contact Modal -->
+    <div id="devSocialModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel w-full max-w-sm rounded-2xl p-6 border border-surface-border shadow-2xl transform scale-95 transition-transform duration-300 relative" id="modalDialogBox">
+            
+            <button id="closeDevModalBtn" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg font-bold">✕</button>
+
+            <div class="text-center mb-6 space-y-1">
+                <h3 class="text-base font-extrabold text-white flex items-center justify-center gap-2">
+                    <span>🌐</span> Connect with Dostified
+                </h3>
+                <p class="text-xs text-zinc-400">Select an official channel below to reach out:</p>
+            </div>
+
+            <div class="space-y-2.5">
+                <a href="https://whatsapp.com/channel/0029Va8zuwILCoX7PJQRD71K" target="_blank" class="flex items-center justify-between p-3 rounded-xl bg-surface-card border border-surface-border hover:border-brandGreen hover:bg-surface-border transition-all duration-200 group">
+                    <div class="flex items-center gap-3">
+                        <img src="whatsapp.png" alt="WhatsApp" class="w-6 h-6 object-contain" onerror="this.onerror=null; this.src='https://placehold.co/40x40/25d366/ffffff?text=WA';">
+                        <span class="text-xs font-bold text-white">WhatsApp Channel</span>
+                    </div>
+                    <span class="text-xs font-bold text-brandGreen group-hover:translate-x-1 transition-transform">➔</span>
+                </a>
+
+                <a href="https://t.me/Dostified" target="_blank" class="flex items-center justify-between p-3 rounded-xl bg-surface-card border border-surface-border hover:border-brandBlue hover:bg-surface-border transition-all duration-200 group">
+                    <div class="flex items-center gap-3">
+                        <img src="telegram.png" alt="Telegram" class="w-6 h-6 object-contain" onerror="this.onerror=null; this.src='https://placehold.co/40x40/0088cc/ffffff?text=TG';">
+                        <span class="text-xs font-bold text-white">Telegram Channel</span>
+                    </div>
+                    <span class="text-xs font-bold text-brandBlue group-hover:translate-x-1 transition-transform">➔</span>
+                </a>
+
+                <a href="https://ig.me/m/Dostified" target="_blank" class="flex items-center justify-between p-3 rounded-xl bg-surface-card border border-surface-border hover:border-brandInsta hover:bg-surface-border transition-all duration-200 group">
+                    <div class="flex items-center gap-3">
+                        <img src="instagram.png" alt="Instagram" class="w-6 h-6 object-contain" onerror="this.onerror=null; this.src='https://placehold.co/40x40/e1306c/ffffff?text=IG';">
+                        <span class="text-xs font-bold text-white">Instagram Profile</span>
+                    </div>
+                    <span class="text-xs font-bold text-brandInsta group-hover:translate-x-1 transition-transform">➔</span>
+                </a>
+
+                <a href="https://www.facebook.com/Dostified" target="_blank" class="flex items-center justify-between p-3 rounded-xl bg-surface-card border border-surface-border hover:border-brandFb hover:bg-surface-border transition-all duration-200 group">
+                    <div class="flex items-center gap-3">
+                        <img src="facebook.png" alt="Facebook" class="w-6 h-6 object-contain" onerror="this.onerror=null; this.src='https://placehold.co/40x40/1877f2/ffffff?text=FB';">
+                        <span class="text-xs font-bold text-white">Facebook Page</span>
+                    </div>
+                    <span class="text-xs font-bold text-brandFb group-hover:translate-x-1 transition-transform">➔</span>
+                </a>
+
+                <a href="https://youtube.com/@Dostified" target="_blank" class="flex items-center justify-between p-3 rounded-xl bg-surface-card border border-surface-border hover:border-brandYt hover:bg-surface-border transition-all duration-200 group">
+                    <div class="flex items-center gap-3">
+                        <img src="youtube.png" alt="YouTube" class="w-6 h-6 object-contain" onerror="this.onerror=null; this.src='https://placehold.co/40x40/ff0000/ffffff?text=YT';">
+                        <span class="text-xs font-bold text-white">YouTube Channel</span>
+                    </div>
+                    <span class="text-xs font-bold text-brandYt group-hover:translate-x-1 transition-transform">➔</span>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Ambient Floating Particles Canvas Background
+        const canvas = document.getElementById('ambientCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 2 + 0.5;
+                this.vx = (Math.random() - 0.5) * 0.3;
+                this.vy = (Math.random() - 0.5) * 0.3;
+                this.alpha = Math.random() * 0.5 + 0.1;
+                this.color = Math.random() > 0.5 ? '#a855f7' : '#00f2fe';
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > width || this.y < 0 || this.y > height) this.reset();
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // Interactive 3D Perspective Tilt Effect
+        const tiltCards = document.querySelectorAll('.tilt-card');
+        tiltCards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * -10;
+                const rotateY = ((x - centerX) / centerX) * 10;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+            });
+        });
+
+        // Interactive Simulator Logic
+        const simLaptopSlider = document.getElementById('simLaptopSlider');
+        const simExtSlider = document.getElementById('simExtSlider');
+        const simSyncToggle = document.getElementById('simSyncToggle');
+
+        const simLaptopValue = document.getElementById('simLaptopValue');
+        const simExtValue = document.getElementById('simExtValue');
+
+        const simLaptopOverlay = document.getElementById('simLaptopBrightnessOverlay');
+        const simExtOverlay = document.getElementById('simExtBrightnessOverlay');
+
+        const simLaptopText = document.getElementById('simLaptopText');
+        const simExtText = document.getElementById('simExtText');
+
+        const simExtSyncStatus = document.getElementById('simExtSyncStatus');
+        const simExtSubtext = document.getElementById('simExtSubtext');
+        const simLogConsole = document.getElementById('simLogConsole');
+
+        function addLog(msg, colorClass = "text-zinc-400") {
+            const line = document.createElement('div');
+            line.className = colorClass;
+            line.textContent = msg;
+            simLogConsole.appendChild(line);
+            if (simLogConsole.children.length > 5) {
+                simLogConsole.removeChild(simLogConsole.firstChild);
+            }
+        }
+
+        let debounceTimer = null;
+
+        // Update Laptop Display
+        simLaptopSlider.addEventListener('input', (e) => {
+            const val = e.target.value;
+            simLaptopValue.textContent = val + '%';
+            simLaptopText.textContent = val + '%';
+            simLaptopOverlay.style.opacity = val / 100;
+
+            if (simSyncToggle.checked) {
+                // When sync is ON, update external slider as well
+                simExtSlider.value = val;
+                simExtValue.textContent = val + '%';
+                simExtText.textContent = val + '%';
+                simExtOverlay.style.opacity = val / 100;
+            }
+
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                addLog(`[WMI WRITE] Laptop Internal -> ${val}%`, 'text-neonPurple');
+                if (simSyncToggle.checked) {
+                    addLog(`[DDC QUEUE] External Synced -> ${val}%`, 'text-electricCyan');
+                }
+            }, 120);
+        });
+
+        // Update External Display
+        simExtSlider.addEventListener('input', (e) => {
+            const val = e.target.value;
+            simExtValue.textContent = val + '%';
+            simExtText.textContent = val + '%';
+            simExtOverlay.style.opacity = val / 100;
+
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                addLog(`[DDC QUEUE] External Hardware VCP 0x10 -> ${val}%`, 'text-electricCyan');
+            }, 120);
+        });
+
+        // Toggle Sync Switch Handler
+        simSyncToggle.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                // Lock external slider to laptop slider value
+                const masterVal = simLaptopSlider.value;
+                simExtSlider.value = masterVal;
+                simExtValue.textContent = masterVal + '%';
+                simExtText.textContent = masterVal + '%';
+                simExtOverlay.style.opacity = masterVal / 100;
+
+                simExtSyncStatus.textContent = 'Mode: SYNCED TO MASTER';
+                simExtSyncStatus.className = 'relative z-10 text-[10px] font-bold text-emerald-800 text-center font-mono';
+                simExtSubtext.textContent = 'Status: Locked to Master Laptop Slider';
+                simExtSubtext.className = 'text-[11px] text-emerald-400 font-mono';
+
+                addLog(`[ENGINE] Sync Enabled: External locked to ${masterVal}%`, 'text-emerald-400');
+            } else {
+                simExtSyncStatus.textContent = 'Mode: UNLINKED / INDEPENDENT';
+                simExtSyncStatus.className = 'relative z-10 text-[10px] font-bold text-amber-800 text-center font-mono';
+                simExtSubtext.textContent = 'Status: Independent Dedicated Slider';
+                simExtSubtext.className = 'text-[11px] text-amber-400 font-mono';
+
+                addLog(`[ENGINE] Sync Disabled: Displays operate independently`, 'text-amber-400');
+            }
+        });
+
+        // Developer Modal Handlers
+        const openDevModalBtn = document.getElementById('openDevModalBtn');
+        const closeDevModalBtn = document.getElementById('closeDevModalBtn');
+        const devSocialModal = document.getElementById('devSocialModal');
+        const modalDialogBox = document.getElementById('modalDialogBox');
+
+        openDevModalBtn.addEventListener('click', () => {
+            devSocialModal.classList.remove('opacity-0', 'pointer-events-none');
+            modalDialogBox.classList.remove('scale-95');
+            modalDialogBox.classList.add('scale-100');
+        });
+
+        function closeModal() {
+            devSocialModal.classList.add('opacity-0', 'pointer-events-none');
+            modalDialogBox.classList.remove('scale-100');
+            modalDialogBox.classList.add('scale-95');
+        }
+
+        closeDevModalBtn.addEventListener('click', closeModal);
+        devSocialModal.addEventListener('click', (e) => {
+            if (e.target === devSocialModal) closeModal();
+        });
+    </script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"1d231b832f5e43c2a72e98cd6d98da3e","r":1,"spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
