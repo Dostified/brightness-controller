@@ -77,7 +77,7 @@
             overflow-x: hidden;
         }
 
-        /* Enhanced Glassmorphism & Depth */
+        /* Glassmorphism Styles */
         .glass-panel {
             background: rgba(18, 18, 24, 0.75);
             backdrop-filter: blur(20px);
@@ -127,6 +127,40 @@
         .tilt-content {
             transform: translateZ(30px);
         }
+
+        /* Realistic 3D Monitor & Laptop Styles */
+        .monitor-bezel {
+            background: linear-gradient(145deg, #1f1f28 0%, #0d0d12 100%);
+            border: 2px solid #2d2d3d;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.8), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+        }
+
+        .monitor-chin {
+            background: linear-gradient(180deg, #181822 0%, #0a0a0f 100%);
+            border-top: 1px solid #2a2a38;
+        }
+
+        .monitor-stand-neck {
+            background: linear-gradient(90deg, #1a1a24 0%, #3a3a4d 50%, #12121a 100%);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+        }
+
+        .monitor-stand-base {
+            background: linear-gradient(180deg, #2a2a38 0%, #121218 100%);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.9), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+            border-top: 1px solid #444458;
+        }
+
+        .laptop-deck {
+            background: linear-gradient(180deg, #1a1a22 0%, #0c0c10 100%);
+            border-top: 2px solid #333344;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.8);
+        }
+
+        .screen-glare {
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 40%);
+        }
     </style>
 </head>
 <body class="relative min-h-screen text-slate-100 antialiased selection:bg-neonPurple selection:text-white">
@@ -151,7 +185,7 @@
             <div class="flex items-center gap-4">
                 <a href="#live-demo" class="hidden sm:inline-flex text-xs font-semibold text-zinc-400 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/5">Interactive Simulator</a>
                 <a href="#features" class="hidden sm:inline-flex text-xs font-semibold text-zinc-400 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/5">Features</a>
-                <a href="https://github.com/Dostified/brightness-controller/releases/tag/2.5" target="_blank" class="relative group overflow-hidden rounded-xl p-[1px] focus:outline-none">
+                <a href="https://github.com/Dostified/brightness-controller/releases target="_blank" class="relative group overflow-hidden rounded-xl p-[1px] focus:outline-none">
                     <span class="absolute inset-0 bg-gradient-to-r from-neonPurple to-electricCyan rounded-xl"></span>
                     <div class="relative px-5 py-2.5 bg-obsidian rounded-[11px] transition-all duration-300 group-hover:bg-opacity-0 flex items-center gap-2">
                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
@@ -180,7 +214,7 @@
             </p>
 
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-                <a href="https://github.com/Dostified/brightness-controller/releases/tag/2.5" target="_blank" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-neonPurple to-neonPurpleHover text-white font-bold text-base shadow-neon-purple hover:shadow-purple-500/50 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 group">
+                <a href="https://github.com/Dostified/brightness-controller/releases target="_blank" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-neonPurple to-neonPurpleHover text-white font-bold text-base shadow-neon-purple hover:shadow-purple-500/50 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 group">
                     <svg class="w-5 h-5 group-hover:translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                     <span>Download Software (.exe)</span>
                 </a>
@@ -266,10 +300,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <div class="text-center max-w-3xl mx-auto mb-16">
-                <span class="text-xs font-bold text-electricCyan uppercase tracking-widest block mb-2">Live Interactive Simulator</span>
-                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Test Real-Time Multi-Monitor Sync</h2>
+                <span class="text-xs font-bold text-electricCyan uppercase tracking-widest block mb-2">3D Hardware Desktop Simulator</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Test Real-Time Physical Display Sync</h2>
                 <p class="text-zinc-400 mt-3 text-sm sm:text-base">
-                    Toggle sync mode or dynamically add extra monitors to simulate multi-display setups in real-time.
+                    Test hardware synchronization across realistic 3D desktop monitors and laptop screens. Add dynamic displays below to test multi-monitor capability!
                 </p>
             </div>
 
@@ -282,8 +316,8 @@
                             <span class="text-xl">⚡</span>
                             <h3 class="font-bold text-white text-base">Control Console</h3>
                         </div>
-                        <button id="addMonitorBtn" class="px-3 py-1.5 rounded-lg bg-neonPurple/20 hover:bg-neonPurple/30 border border-neonPurple/40 text-purple-200 text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95">
-                            <span>+ Add Monitor</span>
+                        <button id="addMonitorBtn" class="px-3 py-1.5 rounded-lg bg-neonPurple/20 hover:bg-neonPurple/30 border border-neonPurple/40 text-purple-200 text-xs font-bold transition-all flex items-center gap-1.5 active:scale-95 shadow-md">
+                            <span>+ Add 3D Monitor</span>
                         </button>
                     </div>
 
@@ -291,7 +325,7 @@
                     <div class="p-3.5 rounded-xl bg-surface-card border border-surface-border/80 flex items-center justify-between">
                         <div>
                             <span class="text-xs font-bold text-white block">Sync Displays Together</span>
-                            <span class="text-[11px] text-zinc-400 block">Bi-directional synchronization across all screens</span>
+                            <span class="text-[11px] text-zinc-400 block">Bi-directional sync across all connected screens</span>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="simSyncToggle" class="sr-only peer">
@@ -304,7 +338,7 @@
                         <!-- Laptop Slider -->
                         <div class="space-y-2 pt-1" id="sliderControl-laptop">
                             <div class="flex justify-between items-center text-xs font-bold">
-                                <span class="text-zinc-300 flex items-center gap-1.5">💻 Internal Laptop Screen</span>
+                                <span class="text-zinc-300 flex items-center gap-1.5">💻 Internal Laptop Panel</span>
                                 <span id="simValue-laptop" class="text-neonPurple font-extrabold text-sm">65%</span>
                             </div>
                             <input type="range" id="simSlider-laptop" data-monitor-id="laptop" min="0" max="100" value="65" class="w-full h-2 bg-surface-border rounded-lg appearance-none cursor-pointer accent-neonPurple sim-range-input">
@@ -316,7 +350,7 @@
                         <!-- External Monitor 1 Slider -->
                         <div class="space-y-2" id="sliderControl-ext1">
                             <div class="flex justify-between items-center text-xs font-bold">
-                                <span class="text-zinc-300 flex items-center gap-1.5">🖥️ External Monitor #1</span>
+                                <span class="text-zinc-300 flex items-center gap-1.5">🖥️ 3D Desktop Monitor #1</span>
                                 <span id="simValue-ext1" class="text-electricCyan font-extrabold text-sm">40%</span>
                             </div>
                             <input type="range" id="simSlider-ext1" data-monitor-id="ext1" min="0" max="100" value="40" class="w-full h-2 bg-surface-border rounded-lg appearance-none cursor-pointer accent-electricCyan sim-range-input">
@@ -331,50 +365,79 @@
                             <span class="text-neonPurple">120ms Debounce</span>
                         </div>
                         <div id="simLogConsole" class="space-y-1 pt-1 text-[10px]">
-                            <div class="text-emerald-400">[READY] System initialized with 2 monitors...</div>
+                            <div class="text-emerald-400">[READY] System initialized with 2 hardware monitors...</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Displays Visual Simulation Column -->
-                <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6" id="screensContainer">
+                <!-- 3D Displays Visual Simulation Column -->
+                <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-8 items-end" id="screensContainer">
                     
-                    <!-- Simulated Laptop Screen -->
-                    <div class="tilt-card glass-card rounded-2xl p-5 border border-surface-border flex flex-col justify-between h-72 relative overflow-hidden shadow-xl" id="simScreen-laptop">
-                        <div class="absolute inset-0 bg-white transition-opacity duration-150 pointer-events-none" id="simOverlay-laptop" style="opacity: 0.65;"></div>
-                        
-                        <div class="relative z-10 flex justify-between items-center text-xs font-bold text-black drop-shadow">
-                            <span>💻 Laptop Panel</span>
-                            <span class="bg-black/70 text-white text-[10px] px-2.5 py-1 rounded-md backdrop-blur">WMI Driver</span>
-                        </div>
+                    <!-- 3D Realistic Laptop Frame -->
+                    <div class="flex flex-col items-center" id="simScreenContainer-laptop">
+                        <div class="tilt-card monitor-bezel p-3.5 w-full relative overflow-hidden flex flex-col justify-between h-64 shadow-2xl" id="simScreen-laptop">
+                            <!-- Internal Display Screen Area -->
+                            <div class="relative w-full h-full bg-slate-950 rounded border border-zinc-800/80 overflow-hidden flex flex-col justify-between p-4">
+                                <div class="absolute inset-0 bg-white transition-opacity duration-150 pointer-events-none" id="simOverlay-laptop" style="opacity: 0.65;"></div>
+                                <div class="absolute inset-0 screen-glare pointer-events-none"></div>
 
-                        <div class="relative z-10 text-center space-y-1 my-auto">
-                            <div class="text-4xl font-extrabold text-slate-900 drop-shadow-md" id="simText-laptop">65%</div>
-                            <div class="text-xs font-bold text-slate-800 uppercase tracking-wider">Internal Display</div>
-                        </div>
+                                <div class="relative z-10 flex justify-between items-center text-[11px] font-bold text-black drop-shadow">
+                                    <span>💻 Internal Screen</span>
+                                    <span class="bg-black/80 text-white text-[9px] px-2 py-0.5 rounded backdrop-blur">WMI Panel</span>
+                                </div>
 
-                        <div class="relative z-10 text-[10px] text-slate-800 text-center font-mono font-bold">
-                            Primary System Panel
+                                <div class="relative z-10 text-center space-y-0.5 my-auto">
+                                    <div class="text-4xl font-extrabold text-slate-900 drop-shadow-md" id="simText-laptop">65%</div>
+                                    <div class="text-[10px] font-bold text-slate-800 uppercase tracking-wider">Internal Display</div>
+                                </div>
+
+                                <div class="relative z-10 text-[9px] text-slate-800 text-center font-mono font-bold">
+                                    Master System Display
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Laptop Hinge Base Deck -->
+                        <div class="laptop-deck w-full h-4 rounded-b-xl flex items-center justify-center relative shadow-lg -mt-0.5 z-10">
+                            <div class="w-16 h-1 bg-zinc-700 rounded-full"></div>
                         </div>
                     </div>
 
-                    <!-- Simulated External DDC Display #1 -->
-                    <div class="tilt-card glass-card rounded-2xl p-5 border border-surface-border flex flex-col justify-between h-72 relative overflow-hidden shadow-xl" id="simScreen-ext1">
-                        <div class="absolute inset-0 bg-white transition-opacity duration-150 pointer-events-none" id="simOverlay-ext1" style="opacity: 0.40;"></div>
-                        
-                        <div class="relative z-10 flex justify-between items-center text-xs font-bold text-black drop-shadow">
-                            <span>🖥️ External Display #1</span>
-                            <span class="bg-black/70 text-white text-[10px] px-2.5 py-1 rounded-md backdrop-blur">DDC/CI VCP 0x10</span>
+                    <!-- 3D Realistic Desktop Monitor #1 -->
+                    <div class="flex flex-col items-center relative" id="simScreenContainer-ext1">
+                        <!-- Dynamic Ambient Screen Glow Under Stand -->
+                        <div class="absolute -bottom-4 w-3/4 h-8 bg-electricCyan/20 blur-xl rounded-full transition-opacity duration-200 pointer-events-none" id="simGlow-ext1" style="opacity: 0.4;"></div>
+
+                        <div class="tilt-card monitor-bezel p-3 w-full relative flex flex-col justify-between h-64 shadow-2xl" id="simScreen-ext1">
+                            <!-- Monitor Screen Area -->
+                            <div class="relative w-full h-48 bg-slate-950 rounded-md border border-zinc-800/80 overflow-hidden flex flex-col justify-between p-4">
+                                <div class="absolute inset-0 bg-white transition-opacity duration-150 pointer-events-none" id="simOverlay-ext1" style="opacity: 0.40;"></div>
+                                <div class="absolute inset-0 screen-glare pointer-events-none"></div>
+
+                                <div class="relative z-10 flex justify-between items-center text-[11px] font-bold text-black drop-shadow">
+                                    <span>🖥️ Desktop Display #1</span>
+                                    <span class="bg-black/80 text-white text-[9px] px-2 py-0.5 rounded backdrop-blur">DDC/CI VCP 0x10</span>
+                                </div>
+
+                                <div class="relative z-10 text-center space-y-0.5 my-auto">
+                                    <div class="text-4xl font-extrabold text-slate-900 drop-shadow-md" id="simText-ext1">40%</div>
+                                    <div class="text-[10px] font-bold text-slate-800 uppercase tracking-wider">Hardware VCP Bus</div>
+                                </div>
+
+                                <div class="relative z-10 text-[9px] font-bold text-amber-800 text-center font-mono" id="simStatus-ext1">
+                                    Mode: UNLINKED / INDEPENDENT
+                                </div>
+                            </div>
+
+                            <!-- Lower Bezel Chin with Brand & Power LED -->
+                            <div class="monitor-chin h-6 w-full mt-2 rounded-b flex items-center justify-between px-3">
+                                <span class="text-[9px] font-extrabold tracking-widest text-zinc-500 uppercase">PRO MONITOR</span>
+                                <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]"></div>
+                            </div>
                         </div>
 
-                        <div class="relative z-10 text-center space-y-1 my-auto">
-                            <div class="text-4xl font-extrabold text-slate-900 drop-shadow-md" id="simText-ext1">40%</div>
-                            <div class="text-xs font-bold text-slate-800 uppercase tracking-wider">Hardware VCP Bus</div>
-                        </div>
-
-                        <div class="relative z-10 text-[10px] font-bold text-amber-800 text-center font-mono" id="simStatus-ext1">
-                            Mode: UNLINKED / INDEPENDENT
-                        </div>
+                        <!-- 3D Stand Neck & Base -->
+                        <div class="monitor-stand-neck w-8 h-8 -mt-0.5 z-0"></div>
+                        <div class="monitor-stand-base w-28 h-3 rounded-t-md -mt-0.5 z-10"></div>
                     </div>
 
                 </div>
@@ -410,7 +473,7 @@
 
                 <div class="glass-card tilt-card rounded-2xl p-8 border border-surface-border relative group">
                     <div class="w-14 h-14 rounded-xl bg-electricCyan/10 border border-electricCyan/30 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
-                        🖥️️
+                        🖥️
                     </div>
                     <h3 class="text-xl font-bold text-white mb-3">Win32 DDC/CI Hardware Engine</h3>
                     <p class="text-zinc-400 text-sm leading-relaxed">
@@ -474,7 +537,7 @@
                     Download Brightness Controller now for Windows 11. Lightweight, portable, standalone execution with zero bloat.
                 </p>
 
-                <a href="https://github.com/Dostified/brightness-controller/releases/tag/2.5" target="_blank" class="inline-flex items-center gap-3 px-10 py-5 rounded-2xl bg-gradient-to-r from-neonPurple to-electricCyan text-slate-950 font-extrabold text-lg shadow-xl hover:scale-105 transition-all duration-300">
+                <a href="https://github.com/Dostified/brightness-controller/releases target="_blank" class="inline-flex items-center gap-3 px-10 py-5 rounded-2xl bg-gradient-to-r from-neonPurple to-electricCyan text-slate-950 font-extrabold text-lg shadow-xl hover:scale-105 transition-all duration-300">
                     <svg class="w-6 h-6 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                     <span>Download Software Executable</span>
                 </a>
@@ -639,7 +702,7 @@
         const simLogConsole = document.getElementById('simLogConsole');
         const addMonitorBtn = document.getElementById('addMonitorBtn');
 
-        let monitorCount = 1; // 1 for ext1, increments for new ones
+        let monitorCount = 1;
         let debounceTimer = null;
 
         function addLog(msg, colorClass = "text-zinc-400") {
@@ -657,10 +720,12 @@
             const valSpan = document.getElementById(`simValue-${id}`);
             const textDiv = document.getElementById(`simText-${id}`);
             const overlay = document.getElementById(`simOverlay-${id}`);
+            const glow = document.getElementById(`simGlow-${id}`);
 
             if (valSpan) valSpan.textContent = val + '%';
             if (textDiv) textDiv.textContent = val + '%';
             if (overlay) overlay.style.opacity = val / 100;
+            if (glow) glow.style.opacity = val / 100;
         }
 
         // Set up bi-directional sync logic for all active sliders
@@ -678,7 +743,7 @@
 
                     clearTimeout(debounceTimer);
                     debounceTimer = setTimeout(() => {
-                        addLog(`[SYNC WRITE] All Monitors -> ${val}%`, 'text-neonPurple');
+                        addLog(`[SYNC WRITE] All Displays -> ${val}%`, 'text-neonPurple');
                     }, 120);
                 } else {
                     // INDEPENDENT MODE: Update only targeted display
@@ -687,7 +752,7 @@
                     clearTimeout(debounceTimer);
                     debounceTimer = setTimeout(() => {
                         const tag = sourceId === 'laptop' ? 'WMI WRITE' : 'DDC QUEUE';
-                        const name = sourceId === 'laptop' ? 'Internal Laptop' : `Display ${sourceId.toUpperCase()}`;
+                        const name = sourceId === 'laptop' ? 'Internal Laptop' : `3D Monitor ${sourceId.toUpperCase()}`;
                         const color = sourceId === 'laptop' ? 'text-neonPurple' : 'text-electricCyan';
                         addLog(`[${tag}] ${name} -> ${val}%`, color);
                     }, 120);
@@ -715,7 +780,7 @@
 
                         if (statusEl) {
                             statusEl.textContent = 'Mode: SYNCED TO MASTER';
-                            statusEl.className = 'relative z-10 text-[10px] font-bold text-emerald-800 text-center font-mono';
+                            statusEl.className = 'relative z-10 text-[9px] font-bold text-emerald-800 text-center font-mono';
                         }
                         if (subtextEl) {
                             subtextEl.textContent = 'Status: Locked to Master Slider';
@@ -724,7 +789,7 @@
                     } else {
                         if (statusEl) {
                             statusEl.textContent = 'Mode: UNLINKED / INDEPENDENT';
-                            statusEl.className = 'relative z-10 text-[10px] font-bold text-amber-800 text-center font-mono';
+                            statusEl.className = 'relative z-10 text-[9px] font-bold text-amber-800 text-center font-mono';
                         }
                         if (subtextEl) {
                             subtextEl.textContent = 'Status: Independent Dedicated Slider';
@@ -741,7 +806,7 @@
             }
         });
 
-        // Dynamic Add Monitor Feature
+        // Dynamic Add 3D Monitor Feature
         addMonitorBtn.addEventListener('click', () => {
             monitorCount++;
             const id = `ext${monitorCount}`;
@@ -754,7 +819,7 @@
             sliderControl.id = `sliderControl-${id}`;
             sliderControl.innerHTML = `
                 <div class="flex justify-between items-center text-xs font-bold">
-                    <span class="text-zinc-300 flex items-center gap-1.5">🖥️ External Monitor #${monitorCount}</span>
+                    <span class="text-zinc-300 flex items-center gap-1.5">🖥️ 3D Desktop Monitor #${monitorCount}</span>
                     <span id="simValue-${id}" class="text-electricCyan font-extrabold text-sm">${currentVal}%</span>
                 </div>
                 <input type="range" id="simSlider-${id}" data-monitor-id="${id}" min="0" max="100" value="${currentVal}" class="w-full h-2 bg-surface-border rounded-lg appearance-none cursor-pointer accent-electricCyan sim-range-input">
@@ -764,45 +829,60 @@
             `;
             slidersContainer.appendChild(sliderControl);
 
-            // 2. Create Screen Card Element
-            const screenCard = document.createElement('div');
-            screenCard.className = 'tilt-card glass-card rounded-2xl p-5 border border-surface-border flex flex-col justify-between h-72 relative overflow-hidden shadow-xl';
-            screenCard.id = `simScreen-${id}`;
-            screenCard.innerHTML = `
-                <div class="absolute inset-0 bg-white transition-opacity duration-150 pointer-events-none" id="simOverlay-${id}" style="opacity: ${currentVal / 100};"></div>
-                
-                <div class="relative z-10 flex justify-between items-center text-xs font-bold text-black drop-shadow">
-                    <span>🖥️️ External Display #${monitorCount}</span>
-                    <div class="flex items-center gap-1">
-                        <span class="bg-black/70 text-white text-[10px] px-2.5 py-1 rounded-md backdrop-blur">DDC/CI VCP 0x10</span>
-                        <button onclick="removeMonitor('${id}')" class="bg-red-500/80 hover:bg-red-600 text-white text-[10px] px-1.5 py-0.5 rounded ml-1 font-bold">✕</button>
+            // 2. Create 3D Monitor Element
+            const monitorContainer = document.createElement('div');
+            monitorContainer.className = 'flex flex-col items-center relative';
+            monitorContainer.id = `simScreenContainer-${id}`;
+            monitorContainer.innerHTML = `
+                <div class="absolute -bottom-4 w-3/4 h-8 bg-electricCyan/20 blur-xl rounded-full transition-opacity duration-200 pointer-events-none" id="simGlow-${id}" style="opacity: ${currentVal / 100};"></div>
+
+                <div class="tilt-card monitor-bezel p-3 w-full relative flex flex-col justify-between h-64 shadow-2xl" id="simScreen-${id}">
+                    <div class="relative w-full h-48 bg-slate-950 rounded-md border border-zinc-800/80 overflow-hidden flex flex-col justify-between p-4">
+                        <div class="absolute inset-0 bg-white transition-opacity duration-150 pointer-events-none" id="simOverlay-${id}" style="opacity: ${currentVal / 100};"></div>
+                        <div class="absolute inset-0 screen-glare pointer-events-none"></div>
+
+                        <div class="relative z-10 flex justify-between items-center text-[11px] font-bold text-black drop-shadow">
+                            <span>🖥️ Display #${monitorCount}</span>
+                            <div class="flex items-center gap-1">
+                                <span class="bg-black/80 text-white text-[9px] px-2 py-0.5 rounded backdrop-blur">DDC/CI VCP 0x10</span>
+                                <button onclick="removeMonitor('${id}')" class="bg-red-500/80 hover:bg-red-600 text-white text-[9px] px-1.5 py-0.5 rounded ml-1 font-bold">✕</button>
+                            </div>
+                        </div>
+
+                        <div class="relative z-10 text-center space-y-0.5 my-auto">
+                            <div class="text-4xl font-extrabold text-slate-900 drop-shadow-md" id="simText-${id}">${currentVal}%</div>
+                            <div class="text-[10px] font-bold text-slate-800 uppercase tracking-wider">Hardware VCP Bus</div>
+                        </div>
+
+                        <div class="relative z-10 text-[9px] font-bold ${isSynced ? 'text-emerald-800' : 'text-amber-800'} text-center font-mono" id="simStatus-${id}">
+                            Mode: ${isSynced ? 'SYNCED TO MASTER' : 'UNLINKED / INDEPENDENT'}
+                        </div>
+                    </div>
+
+                    <div class="monitor-chin h-6 w-full mt-2 rounded-b flex items-center justify-between px-3">
+                        <span class="text-[9px] font-extrabold tracking-widest text-zinc-500 uppercase">PRO MONITOR</span>
+                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399]"></div>
                     </div>
                 </div>
 
-                <div class="relative z-10 text-center space-y-1 my-auto">
-                    <div class="text-4xl font-extrabold text-slate-900 drop-shadow-md" id="simText-${id}">${currentVal}%</div>
-                    <div class="text-xs font-bold text-slate-800 uppercase tracking-wider">Hardware VCP Bus</div>
-                </div>
-
-                <div class="relative z-10 text-[10px] font-bold ${isSynced ? 'text-emerald-800' : 'text-amber-800'} text-center font-mono" id="simStatus-${id}">
-                    Mode: ${isSynced ? 'SYNCED TO MASTER' : 'UNLINKED / INDEPENDENT'}
-                </div>
+                <div class="monitor-stand-neck w-8 h-8 -mt-0.5 z-0"></div>
+                <div class="monitor-stand-base w-28 h-3 rounded-t-md -mt-0.5 z-10"></div>
             `;
-            screensContainer.appendChild(screenCard);
+            screensContainer.appendChild(monitorContainer);
 
-            // Attach listeners and 3D effects
-            attachTiltEffect(screenCard);
+            // Attach 3D tilt effects and range slider event bindings
+            attachTiltEffect(monitorContainer.querySelector('.tilt-card'));
             bindSliderEvents(document.getElementById(`simSlider-${id}`));
 
-            addLog(`[HOT-PLUG] Monitor #${monitorCount} connected`, 'text-electricCyan');
+            addLog(`[HOT-PLUG] 3D Monitor #${monitorCount} connected`, 'text-electricCyan');
         });
 
         // Global Remove Monitor Handler
         window.removeMonitor = function(id) {
             const control = document.getElementById(`sliderControl-${id}`);
-            const screen = document.getElementById(`simScreen-${id}`);
+            const screenContainer = document.getElementById(`simScreenContainer-${id}`);
             if (control) control.remove();
-            if (screen) screen.remove();
+            if (screenContainer) screenContainer.remove();
             addLog(`[HOT-PLUG] Display ${id.toUpperCase()} disconnected`, 'text-red-400');
         };
 
